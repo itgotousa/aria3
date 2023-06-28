@@ -1,6 +1,31 @@
 #ifndef __A3_CONSOLE_H__
 #define __A3_CONSOLE_H__
 
+#include "common.h"
+
+#include <memory>
+
+#include "OutputFile.h"
+
+namespace aria2 {
+
+    typedef std::shared_ptr<OutputFile> Console;
+
+    namespace global {
+
+        // Initialize console output facility. If the |suppress| is true, all
+        // output sent to the console objects are discarded.
+        void initConsole(bool suppress);
+
+        // stdout is redirected to stderr.
+        void redirectStdoutToStderr();
+
+        const Console& cout();
+        const Console& cerr();
+
+    } // namespace global
+
+} // namespace aria2
 
 #endif /* __A3_CONSOLE_H__ */
 

@@ -1,6 +1,36 @@
 #ifndef __A3_OUTPUTFILE_H__
 #define __A3_OUTPUTFILE_H__
 
+#include "common.h"
+
+#include <cstdlib>
+#include <cstdarg>
+
+// include <string> just to cancel libintl's #define vprintf libintl_vprintf
+#include <string>
+
+namespace aria2 {
+
+    class OutputFile {
+    public:
+        virtual ~OutputFile() = default;
+        virtual size_t write(const char* str) = 0;
+        virtual int flush() = 0;
+        virtual int vprintf(const char* format, va_list va) = 0;
+        inline int printf(const char* format, ...)
+        {
+            va_list va;
+            va_start(va, format);
+            int rv = vprintf(format, va);
+            va_end(va);
+            return rv;
+        }
+        // Returns true if the output medium supports ANSI color codes.
+        virtual bool supportsColor() = 0;
+    };
+
+} // namespace aria2
+
 
 #endif /* __A3_OUTPUTFILE_H__ */
 

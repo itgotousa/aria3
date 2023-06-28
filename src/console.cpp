@@ -1,4 +1,54 @@
 
+#include "console.h"
+#include "NullOutputFile.h"
+#ifdef __MINGW32__
+#  include "WinConsoleFile.h"
+#else // !__MINGW32__
+#  include "BufferedFile.h"
+#endif // !__MINGW32__
+
+namespace aria2 {
+
+    namespace global {
+
+        namespace {
+            Console consoleCout;
+            Console consoleCerr;
+            Console consoleCoutBackup;
+        }; // namespace
+
+        void initConsole(bool suppress)
+        {
+#if 0
+            if (suppress) {
+                consoleCout = consoleCerr = std::make_shared<NullOutputFile>();
+            }
+            else {
+#ifdef __MINGW32__
+                consoleCout = std::make_shared<WinConsoleFile>(STD_OUTPUT_HANDLE);
+                consoleCerr = std::make_shared<WinConsoleFile>(STD_ERROR_HANDLE);
+#else  // !__MINGW32__
+                consoleCout = std::make_shared<BufferedFile>(stdout);
+                consoleCerr = std::make_shared<BufferedFile>(stderr);
+#endif // !__MINGW32__
+            }
+#endif
+        }
+
+        void redirectStdoutToStderr()
+        {
+            consoleCoutBackup = std::move(consoleCout);
+            consoleCout = consoleCerr;
+        }
+
+        const Console& cout() { return consoleCout; }
+
+        const Console& cerr() { return consoleCerr; }
+
+    } // namespace global
+
+} // namespace aria2
+
 
 
 #if 0
