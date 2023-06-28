@@ -1,6 +1,63 @@
 #ifndef __A3_EXCEPTION_H__
 #define __A3_EXCEPTION_H__
 
+#include "common.h"
+
+#include <string>
+#include <memory>
+
+#include "error_code.h"
+
+namespace aria2 {
+
+    class Exception : public std::exception {
+    private:
+        const char* file_;
+
+        int line_;
+        // This is low-level system error code, typically errno in Linux.
+        int errNum_;
+
+        std::string msg_;
+        // This is application-level error code.
+        error_code::Value errorCode_;
+        // Exception that this object wraps. Normally this cause_ is the
+        // root cause of this exception.
+        std::shared_ptr<Exception> cause_;
+
+    protected:
+        virtual std::shared_ptr<Exception> copy() const = 0;
+
+    public:
+        Exception(const char* file, int line, const std::string& msg);
+
+        Exception(const char* file, int line, const std::string& msg,
+            error_code::Value errorCode, const Exception& cause);
+        // errorCode_ is initializedwith cause.errorCode_.
+        Exception(const char* file, int line, const std::string& msg,
+            const Exception& cause);
+
+        Exception(const char* file, int line, const std::string& msg,
+            error_code::Value errorCode);
+
+        Exception(const char* file, int line, int errNum, const std::string& msg);
+
+        Exception(const char* file, int line, int errNum, const std::string& msg,
+            error_code::Value errorCode);
+
+        virtual ~Exception() throw();
+
+        virtual const char* what() const throw() CXX11_OVERRIDE;
+
+        std::string stackTrace() const;
+
+        int getErrNum() const { return errNum_; }
+
+        error_code::Value getErrorCode() const { return errorCode_; }
+    };
+
+} // namespace aria2
+
 
 #endif /* __A3_EXCEPTION_H__ */
 

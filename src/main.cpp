@@ -9,7 +9,7 @@
 #  include <shellapi.h>
 #endif // __MINGW32__
 
-//#include <aria2/aria2.h>
+#include "aria2/aria2.h"
 #include "Context.h"
 #include "MultiUrlRequestInfo.h"
 #include "message.h"
@@ -24,7 +24,6 @@ namespace aria2 {
 
     error_code::Value main(int argc, char** argv)
     {
-#if 0
 #ifdef __MINGW32__
         int winArgc;
         auto winArgv = CommandLineToArgvW(GetCommandLineW(), &winArgc);
@@ -50,15 +49,12 @@ namespace aria2 {
             exitStatus = context.reqinfo->execute();
         }
         return exitStatus;
-#endif
-        return error_code::FINISHED;
     }
 
 } // namespace aria2
 
 int main(int argc, char** argv)
 {
-#if 10    
   aria2::error_code::Value r;
   aria2::global::initConsole(false);
   try {
@@ -70,11 +66,8 @@ int main(int argc, char** argv)
                                   ex.stackTrace().c_str());
     r = ex.getErrorCode();
   }
+
   return r;
-#endif 
-    printf("Hello, aria3!\n");
-    
-    return 0;
 }
 
 

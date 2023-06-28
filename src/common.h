@@ -67,8 +67,14 @@
 #  include <sys/types.h>
 #endif
 
+#define CXX11_OVERRIDE override
 #endif // D_COMMON_H
 
+#ifdef _WIN32
+#include <windows.h>
+#endif //_WIN32
+
+#include "error_code.h"
 
 #endif /* __A3_COMMON_H__ */
 

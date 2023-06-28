@@ -1,6 +1,81 @@
 #ifndef __A3_MULTIURLREQUESTINFO_H__
 #define __A3_MULTIURLREQUESTINFO_H__
 
+#include "common.h"
+
+#include <signal.h>
+
+#include <vector>
+#include <memory>
+
+#include "DownloadResult.h"
+#include "util.h"
+
+namespace aria2 {
+
+    class RequestGroup;
+    class Option;
+    class UriListParser;
+    class DownloadEngine;
+
+    class MultiUrlRequestInfo {
+    private:
+        std::vector<std::shared_ptr<RequestGroup>> requestGroups_;
+
+        std::shared_ptr<Option> option_;
+
+        std::shared_ptr<UriListParser> uriListParser_;
+
+        std::unique_ptr<DownloadEngine> e_;
+
+        //sigset_t mask_;
+
+        bool useSignalHandler_;
+
+        void printMessageForContinue();
+        void setupSignalHandlers();
+        void resetSignalHandlers();
+
+    public:
+        /*
+         * MultiRequestInfo effectively takes ownership of the
+         * requestGroups.
+         */
+        MultiUrlRequestInfo(std::vector<std::shared_ptr<RequestGroup>> requestGroups,
+            const std::shared_ptr<Option>& op,
+            const std::shared_ptr<UriListParser>& uriListParser);
+
+        ~MultiUrlRequestInfo();
+
+        // Returns FINISHED if all downloads have completed, otherwise returns the
+        // last download result.
+        //
+        // This method actually calls prepare() and
+        // getDownloadEngine()->run(true) and getResult().
+        error_code::Value execute();
+
+        // Performs preparations for downloads, including creating
+        // DownloadEngine instance. This function returns 0 if it succeeds,
+        // or -1.
+        int prepare();
+
+        // Performs finalization of download process, including saving
+        // sessions. This function returns last error code in this session,
+        // in particular, this function returns FINISHED if all downloads
+        // have completed.
+        error_code::Value getResult();
+
+        const std::unique_ptr<DownloadEngine>& getDownloadEngine() const;
+
+        // Signal handlers are not prepared if false is given.
+        void setUseSignalHandler(bool useSignalHandler)
+        {
+            useSignalHandler_ = useSignalHandler;
+        }
+    };
+
+} // namespace aria2
+
 
 #endif /* __A3_MULTIURLREQUESTINFO_H__ */
 

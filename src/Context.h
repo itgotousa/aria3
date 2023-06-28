@@ -1,6 +1,29 @@
 #ifndef __A3_CONTEXT_H__
 #define __A3_CONTEXT_H__
 
+#include "common.h"
+
+#include <memory>
+
+#include "aria2/aria2.h"
+
+namespace aria2 {
+
+    class MultiUrlRequestInfo;
+
+    struct Context {
+        // Set the |standalone| false if the context is created via libaria2
+        // API. The |argc| and |argv| is expected to the command-line
+        // arguments, which will be passed to getopt_long(3) in the end.
+        // The |options| is the additional option values and is considered
+        // as a part of command-line arguments.
+        Context(bool standalone, int argc, char** argv, const KeyVals& options);
+        ~Context();
+        std::shared_ptr<MultiUrlRequestInfo> reqinfo;
+    };
+
+} // namespace aria2
+
 
 #endif /* __A3_CONTEXT_H__ */
 
